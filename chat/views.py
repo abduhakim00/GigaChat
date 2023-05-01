@@ -1,9 +1,11 @@
-from .models import Member
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, UpdateAPIView, get_object_or_404
-from .serializers import MemberSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
+from django.shortcuts import render
+from .serializers import MemberSerializer
+from .models import Member
 
 
 class MemberApiView(ListCreateAPIView, UpdateAPIView):
@@ -28,5 +30,8 @@ class MemberApiView(ListCreateAPIView, UpdateAPIView):
         user.avatar.delete()
         return user
         
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
+    
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def homePage(request):
+    return render(request, 'chat/index.html')

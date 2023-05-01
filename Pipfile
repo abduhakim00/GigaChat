@@ -10,6 +10,8 @@ djoser = "*"
 djangorestframework-simplejwt = "*"
 mysqlclient = "*"
 pillow = "*"
+django-debug-toolbar = "*"
+channels = "==3.0.5"
 
 [dev-packages]
 
