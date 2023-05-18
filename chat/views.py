@@ -4,7 +4,8 @@ from rest_framework.generics import ListCreateAPIView, UpdateAPIView, get_object
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import render
-from .serializers import MemberSerializer
+from django.contrib.auth.models import User
+from .serializers import MemberSerializer, UserSerializer
 from .models import Member
 
 
@@ -35,3 +36,29 @@ class MemberApiView(ListCreateAPIView, UpdateAPIView):
 @permission_classes((IsAuthenticated, ))
 def homePage(request):
     return render(request, 'chat/index.html')
+
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def Chat1on1(request, id):
+    if User.objects.filter(id=id).exists():
+        other_user = User.objects.filter(id=id).get()
+        return render(request, 'chat/oneonone.html', {'user': request.user.username, 'other':id, 'other_name': other_user.username})
+    else:
+        return Response("No such user", status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+@permission_classes((IsAuthenticated, ))
+def lookUp(request):
+    user = request.GET.get('username')
+    if user != '':
+        q = User.objects.filter(username=user)
+        if q.exists():
+            serializer = UserSerializer(User.objects.filter(username=user).get())
+            print(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response('No such user', status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        return Response('search info not given!', status=status.HTTP_400_BAD_REQUEST)

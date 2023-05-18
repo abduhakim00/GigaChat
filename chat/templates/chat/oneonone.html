@@ -4,26 +4,19 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GigaChat!</title>
+    <title>GigaChat</title>
   </head>
   <body>
-    <h1>Let's chat like real chads!</h1>
-    <h2>Find your mate!</h2>
-    <form id="lookup">
-      <label for="user">Start a convo!</label>
-      <input id="user" type="text" name="message" />
-      <button type="submit">Submit</button>
-    </form>
-    <p id="response"></p>
+    <h1>Pour your heart {{user}}!</h1>
+    <h2>Let {{other_name}} hear what is innerhalb!</h2>
     <br />
-    <h2>Global Chat!</h2>
     <form id="form">
       <input type="text" name="message" />
     </form>
     <div id="messages"></div>
-
     <script type="text/javascript">
-      let url = `ws://${window.location.host}/ws/socket-server/`;
+      let other_id = "{{other}}";
+      let url = `ws://${window.location.host}/ws/chat/${other_id}/`;
       const chatSocket = new WebSocket(url);
 
       chatSocket.onmessage = function (e) {
@@ -38,7 +31,6 @@
           );
         }
       };
-
       let form = document.getElementById("form");
       form.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -49,19 +41,6 @@
           })
         );
         form.reset();
-      });
-      let lookupUser = document.getElementById("lookup");
-      lookupUser.addEventListener("submit", (e) => {
-        e.preventDefault();
-        let message = e.target.message.value;
-        fetch(`http://127.0.0.1:8000/lookup?username=${message}`)
-          .then((x) => x.json())
-          .then((data) => {
-            let response = document.getElementById("response");
-            console.log(data);
-            response.textContent = data.id;
-            lookupUser.reset();
-          });
       });
     </script>
   </body>
